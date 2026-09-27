@@ -1,0 +1,10 @@
+# One entry per artwork. Put the image files in assets/img/art/.
+#   file:        filename inside assets/img/art/   (required)
+#   title:       shown under the thumbnail          (required)
+#   date:        YYYY-MM-DD                         (optional)
+#   description: shown in the enlarged view         (optional)
+
+- file: example.svg
+  title: Example piece
+  date: 2026-09-27
+  description: Replace me with a real artwork.

@@ -1,0 +1,55 @@
+{%- assign pinned = site.posts | where: "pin", true -%}
+{%- assign pinned_max = site.sidebar.pinned_max | default: 3 -%}
+{%- assign tag_recent = site.sidebar.tag_recent | default: 3 -%}
+{%- assign tags_sorted = site.tags | sort -%}
+
+<aside class="sidebar" id="sidebar" aria-label="Site navigation">
+  {% include menu-button.html class="menu-toggle--sidebar" %}
+
+  <nav class="sidebar-nav">
+    <ul class="nav">
+      <li><a class="nav-link" href="{{ '/' | relative_url }}"{% if page.url == '/' %} aria-current="page"{% endif %}>New</a></li>
+
+      {%- if pinned.size > 0 %}
+        <li>
+          <details class="nav-group" open>
+            <summary class="nav-link">Pinned</summary>
+            <ul class="nav-sub">
+              {%- for post in pinned limit: pinned_max %}
+                <li><a class="nav-link" href="{{ post.url | relative_url }}"{% if page.url == post.url %} aria-current="page"{% endif %}>{{ post.title }}</a></li>
+              {%- endfor %}
+            </ul>
+          </details>
+        </li>
+      {%- endif %}
+
+      <li><a class="nav-link" href="{{ '/about/' | relative_url }}"{% if page.url == '/about/' %} aria-current="page"{% endif %}>About me</a></li>
+      <li><a class="nav-link" href="{{ '/art/' | relative_url }}"{% if page.url == '/art/' %} aria-current="page"{% endif %}>Art</a></li>
+      <li><a class="nav-link" href="{{ '/links/' | relative_url }}"{% if page.url == '/links/' %} aria-current="page"{% endif %}>Links</a></li>
+    </ul>
+
+    {%- if tags_sorted.size > 0 %}
+      <div class="nav-sep" aria-hidden="true">---</div>
+
+      <ul class="nav nav--tags" aria-label="Tags">
+        {%- for tag in tags_sorted %}
+          {%- assign tag_name = tag[0] -%}
+          {%- assign tag_posts = tag[1] -%}
+          <li>
+            <details class="nav-group">
+              <summary class="nav-link nav-link--tag">{{ tag_name }}</summary>
+              <ul class="nav-sub">
+                {%- for post in tag_posts limit: tag_recent %}
+                  <li><a class="nav-link" href="{{ post.url | relative_url }}"{% if page.url == post.url %} aria-current="page"{% endif %}>{{ post.title }}</a></li>
+                {%- endfor %}
+                {%- if tag_posts.size > tag_recent %}
+                  <li><a class="nav-link nav-link--more" href="{{ '/tags/' | relative_url }}#{{ tag_name | slugify }}">all {{ tag_posts.size }}…</a></li>
+                {%- endif %}
+              </ul>
+            </details>
+          </li>
+        {%- endfor %}
+      </ul>
+    {%- endif %}
+  </nav>
+</aside>

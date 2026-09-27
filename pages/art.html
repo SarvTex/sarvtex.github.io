@@ -1,0 +1,20 @@
+---
+title: Art
+permalink: /art/
+subtitle: Click an image to enlarge it. Edit <code>_data/art.yml</code> to add pieces.
+bg_image: none
+art: true
+---
+<div class="gallery">
+  {%- for piece in site.data.art %}
+    {%- assign src = piece.file | prepend: "/assets/img/art/" | relative_url %}
+    <figure class="gallery__item">
+      <a href="{{ src }}" class="gallery__link" data-caption="{{ piece.title | escape }}{% if piece.description %} — {{ piece.description | escape }}{% endif %}">
+        <img src="{{ src }}" alt="{{ piece.title | escape }}" loading="lazy">
+      </a>
+      <figcaption>{{ piece.title }}{% if piece.date %} <span class="post-meta">· {{ piece.date | date: "%Y" }}</span>{% endif %}</figcaption>
+    </figure>
+  {%- else %}
+    <p>Nothing here yet.</p>
+  {%- endfor %}
+</div>

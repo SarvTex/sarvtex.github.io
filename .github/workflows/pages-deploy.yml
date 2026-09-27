@@ -30,10 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          fetch-depth: 0
-          # submodules: true
-          # If using the 'assets' git submodule from Chirpy Starter, uncomment above
-          # (See: https://github.com/cotes2020/chirpy-starter/tree/main/assets)
+          fetch-depth: 0 # full history, so posts can show an "updated" date
 
       - name: Setup Pages
         id: pages

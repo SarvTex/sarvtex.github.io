@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'en' }}">
+<head>
+  {% include head.html %}
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <div class="site">
+    {% include sidebar.html %}
+    <div class="sidebar-backdrop" hidden></div>
+
+    <div class="main-col">
+      <header class="site-header">
+        {% include menu-button.html class="menu-toggle--header" %}
+        <a class="site-title" href="{{ '/' | relative_url }}">{{ site.header_name | default: site.title }}</a>
+        {% if site.tagline %}<span class="site-tagline">{{ site.tagline }}</span>{% endif %}
+        <button type="button" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg>
+        </button>
+      </header>
+
+      <div class="content-row">
+        <main id="content" class="content">
+          {{ content }}
+
+          <footer class="site-footer">
+            © {{ site.time | date: "%Y" }} {{ site.author.name }}
+            {%- if site.github.username %} · <a href="https://github.com/{{ site.github.username }}">GitHub</a>{% endif %}
+          </footer>
+        </main>
+
+        {% include background.html %}
+      </div>
+    </div>
+  </div>
+
+  {% if page.art %}{% include lightbox.html %}{% endif %}
+</body>
+</html>
