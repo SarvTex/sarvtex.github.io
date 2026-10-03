@@ -4,12 +4,164 @@ My personal blog, live at <https://sarvtex.github.io>.
 
 It's a small hand-written [Jekyll](https://jekyllrb.com/) site with no theme gem and no JavaScript framework.
 Everything that controls how it looks and behaves is in this repository and is meant to be
-read and changed. This README covers three things:
+read and changed. This README covers four things:
 
+0. **[Quick tour for beginners](#0-quick-tour-for-beginners)**: the whole site in one read.
 1. **[Everyday use](#1-everyday-use)**: writing posts, pinning, tags, images, art.
 2. **[How it works](#2-how-it-works)**: what each file does and how a Markdown file becomes a web page.
 3. **[Tutorial / learning path](#3-tutorial--learning-path)**: step-by-step guides and human-made
    courses for each technology used here, in the order I'd learn them, plus small exercises on this site.
+
+---
+
+## 0. Quick tour for beginners
+
+### The big idea: a static site generator
+
+The site is built with **Jekyll**. You don't write finished web pages by hand. You write **content**
+(mostly Markdown `.md` files), and Jekyll combines it with **templates** (HTML files with placeholders)
+to produce plain HTML, CSS and JS in a folder called `_site/`. That folder is the actual website.
+
+```
+your .md posts + templates + styles  ──(jekyll build)──►  _site/  ──►  GitHub Pages serves it
+```
+
+Hosting is handled by **GitHub Pages**. When you push to the `main` branch,
+`.github/workflows/pages-deploy.yml` runs on GitHub's servers. It builds the site, checks it for broken
+links, and publishes it at https://sarvtex.github.io. Nothing on other branches goes live until it's
+merged into `main` and pushed.
+
+### Content vs. background (machinery)
+
+**Content: the files you'll normally edit**
+
+| File / folder | What it is |
+|---|---|
+| `_posts/` | Blog posts, one `.md` file each |
+| `pages/about.md` | "About me" page |
+| `pages/links.md` | "Links" page |
+| `_data/art.yml` + `assets/img/art/` | The Art gallery: the list of pieces, plus the image files |
+| `assets/img/bg/` | Images that scroll in the right-hand column |
+| `_config.yml` | Site settings: name, tagline, author, scroll speed, etc. |
+
+**Machinery: you rarely need to touch these**
+
+| File / folder | What it does |
+|---|---|
+| `_layouts/default.html` | Skeleton of every page: header bar, sidebar, content area, footer, image column |
+| `_layouts/post.html` | Wraps a post with its title, date, author and tags |
+| `_layouts/page.html` | Same idea for non-post pages (About, Links) |
+| `_includes/` | Reusable pieces: `sidebar.html` (left menu), `head.html` (math, fonts, dark mode), `background.html`, `lightbox.html` (enlarged art images), `menu-button.html` |
+| `index.html` | The homepage ("New"), which automatically lists all posts |
+| `pages/tags.html`, `pages/art.html` | Pages generated automatically from posts' tags and from `art.yml` |
+| `_sass/*.scss`, `assets/css/style.scss` | Styling: colors, fonts, spacing. `_base.scss` holds the colors |
+| `assets/js/main.js` | Interactive parts: dark mode toggle, sidebar collapse, scrolling images |
+| `_plugins/posts-lastmod-hook.rb` | Adds an "updated on" date to posts edited later, using git history |
+| `Makefile` | Shortcuts: `make new-post` creates a new post file with the preamble filled in |
+| `Gemfile` | Lists the Ruby packages Jekyll needs (like `requirements.txt` in Python) |
+| `.github/workflows/` | The automatic build-and-deploy step |
+| `tools/`, `.devcontainer/`, `.vscode/` | Helpers for running the site locally |
+
+The `{{ ... }}` and `{% ... %}` inside the HTML files are **Liquid**, Jekyll's template language.
+For example, `{{ page.title }}` gets replaced by the title of the page being built.
+
+### Front matter: the settings block at the top of each file
+
+Every content file starts with a block between `---` lines. That block is the file's settings, and
+the text below it is the content:
+
+```markdown
+---
+title: Hello World
+date: 2026-07-09 12:00:00 -0300
+subtitle: Where it all begins.
+tags: [meta]
+---
+
+## A new blog
+Your text here...
+```
+
+Jekyll reads these values, and the templates use them. For example, `tags` is what fills the tag
+list in the sidebar.
+
+### Creating a new post
+
+**The quick way:** run
+
+```bash
+make new-post                    # asks for the title
+make new-post title="My post"    # or give it directly
+```
+
+This creates `_posts/<today>-my-post.md` with the date and the preamble below already filled in
+(accents are dropped from the file name, and an existing post is never overwritten). Uncomment the
+optional lines you want, then write the post.
+
+**By hand**, which is what `make new-post` does for you:
+
+1. Create a file in `_posts/` named **`YYYY-MM-DD-some-title.md`**, for example
+   `_posts/2026-10-03-my-first-real-post.md`. The name format is required. The `some-title` part
+   becomes the web address: `/posts/my-first-real-post/`.
+2. Put front matter at the top:
+   ```yaml
+   ---
+   title: My first real post
+   date: 2026-10-03 14:00:00 -0300
+   subtitle: Optional one-liner under the title
+   tags: [research, notes]
+   # pin: true          # show it under "Pinned" in the sidebar
+   # image: /assets/img/something.png   # thumbnail on the homepage
+   # bg_closed: true    # start with the image column hidden
+   ---
+   ```
+3. Write the body in Markdown. **`_posts/2026-09-27-formatting-demo.md` is the cheat sheet.** It
+   shows text, images, math (`$$ ... $$`), code blocks and tables.
+4. For images, put the files in `assets/img/` (a subfolder like `assets/img/posts/` keeps things
+   tidy) and use `![description](/assets/img/posts/file.png)`.
+
+After that, the post appears on the homepage, in the tag lists and on the Tags page automatically.
+You don't edit any menus by hand.
+
+### Other common tasks
+
+- **Add art:** put the image in `assets/img/art/`, then add an entry to `_data/art.yml`.
+- **Change the scrolling background:** add or remove images in `assets/img/bg/`. All of them are used.
+- **Change the About or Links pages:** edit `pages/about.md` or `pages/links.md`.
+- **Add a new page to the menu:** create `pages/whatever.md` with `title:` and `permalink: /whatever/`
+  in its front matter. Then add a matching `<li>` line in `_includes/sidebar.html`. That's the one
+  place where menu items are listed by hand.
+- **Change colors or fonts:** edit `_sass/_base.scss`.
+
+### Previewing on your computer before publishing
+
+```bash
+bundle install          # first time only: installs Jekyll and friends
+bash tools/run.sh       # same as: bundle exec jekyll serve
+```
+
+Then open http://127.0.0.1:4000 in your browser. While the preview is running, it rebuilds whenever
+you save a file, so you just refresh the page. One exception: changes to `_config.yml` only take
+effect after you stop (Ctrl+C) and restart it.
+
+### Publishing
+
+```bash
+git add .
+git commit -m "New post: ..."
+git push                # on main
+```
+
+On GitHub, go to the repo's **Actions** tab to watch the build. It's green when it worked, and the
+site updates about a minute later. If it's red, the "Test site" step usually found a broken link or
+image path.
+
+### Placeholders still to replace
+
+- `assets/img/bg/` only contains `placeholder-*.svg` images.
+- `assets/img/art/example.svg` and its entry in `_data/art.yml`.
+- The About and Links pages still say *"Edit `pages/...` to change this page."*
+- The formatting demo post is pinned. Delete it once you've learned from it, or remove `pin: true`.
 
 ---
 
@@ -27,7 +179,8 @@ Pushing to `main` publishes the site automatically (see [Deploying](#deploying))
 
 ### Write a post
 
-Create `_posts/YYYY-MM-DD-some-title.md`. The date in the file name matters, because Jekyll uses it for ordering:
+Run `make new-post` (or `make new-post title="My post"`) to create the file with the preamble filled in.
+Or create `_posts/YYYY-MM-DD-some-title.md` by hand. The date in the file name matters, because Jekyll uses it for ordering:
 
 ```markdown
 ---

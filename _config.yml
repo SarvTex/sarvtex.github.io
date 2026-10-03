@@ -3,9 +3,9 @@
 lang: en
 timezone: America/Sao_Paulo
 
-title: sarvtex # browser tab (same on every page) and search engines
-header_name: NAME # the big name in the red header bar (falls back to `title`)
-tagline: Doctorate Student @ Unicamp # shown next to the title on wide screens
+title: SarvTex's blog # browser tab (same on every page) and search engines
+header_name: SarvTex # the big name in the red header bar (falls back to `title`)
+tagline: A side-project # shown next to the title on wide screens
 description: >- # used by SEO meta tags
   This is my personal blog, rarely updated. Feature CV information and other small things relevant to my interests.
 
@@ -84,5 +84,6 @@ exclude:
   - README.md
   - LICENSE
   - Gemfile
+  - Makefile
   - Gemfile.lock
   - vendor
