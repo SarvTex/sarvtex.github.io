@@ -119,6 +119,10 @@ html:not([data-theme="dark"]) .theme-toggle .icon-sun {
   // The column itself always runs from the header to the bottom of the window.
   --bg-w: min(calc((100vh - var(--header-h) - 2 * var(--gap)) / 1.41421), 24vw);
 
+  // Placed explicitly: on phones the sidebar is position: fixed and no longer
+  // holds column 1, so auto-placement would put this in the 0-width column.
+  grid-column: 2;
+  grid-row: 2;
   min-width: 0;
   display: grid;
   // [space][text][space][image] — equal space either side of the text.

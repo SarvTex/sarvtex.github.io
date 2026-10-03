@@ -1,7 +1,7 @@
 ---
 title: Formatting demo
 date: 2026-09-27 10:00:00 -0300
-subtitle: Everything a post can contain, in one place.
+subtitle: Everything a post can contain, in one place — text, images, math, code and tables — so you can see how each piece looks before writing a real post of your own.
 tags: [meta, demo]
 pin: true                 # shows under "Pinned" in the sidebar (max 3)
 description: A tour of what a post can contain — delete this file whenever you like.
@@ -22,6 +22,17 @@ Regular paragraphs, *italic*, **bold**, `inline code`, and [links](https://jekyl
 
 1. and a numbered
 2. one
+
+## Images
+
+Images use the usual Markdown syntax. The first image in a post also becomes its
+thumbnail on the "New" page (or set `image:` in the front matter to pick another).
+
+![A placeholder image](/assets/img/bg/placeholder-4.svg)
+
+A second one, with a width set via a kramdown attribute:
+
+![Another placeholder image](/assets/img/bg/placeholder-7.svg){: width="60%"}
 
 ## Math
 
