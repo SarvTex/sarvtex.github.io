@@ -5,8 +5,7 @@ subtitle: Everything a post can contain, in one place.
 tags: [meta, demo]
 pin: true                 # shows under "Pinned" in the sidebar (max 3)
 description: A tour of what a post can contain — delete this file whenever you like.
-# bg_image: /assets/img/bg/placeholder-2.svg   # force a specific background image
-# bg_image: none                               # or hide the background column
+# bg_closed: true          # start with the image column hidden on this page
 ---
 
 This post shows the building blocks available when writing. Look at its source in

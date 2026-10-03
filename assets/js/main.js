@@ -1,4 +1,4 @@
-// Site behaviour: sidebar toggle, dark mode, background images, math, art lightbox.
+// Site behaviour: sidebar toggle, dark mode, image column, math, art lightbox.
 // No build step and no dependencies (KaTeX is loaded separately on pages with math).
 (function () {
   'use strict';
@@ -77,61 +77,40 @@
   });
 
   // ---------------------------------------------------------------
-  // Background column: fixed / random / rotate
+  // Image column: a strip of images scrolling upward in a loop
   // ---------------------------------------------------------------
-  var panel = document.querySelector('.bg-panel');
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var bgColumn = document.querySelector('.bg-column');
 
-  function preload(src, done) {
-    var img = new Image();
-    img.onload = img.onerror = function () { done(); };
-    img.src = src;
-  }
+  if (bgColumn) {
+    var panel = bgColumn.querySelector('.bg-panel');
+    var bgToggle = bgColumn.querySelector('.bg-toggle');
+    // Pages that start closed (bg_closed: true) don't change the remembered setting.
+    var closedPage = bgColumn.hasAttribute('data-closed');
 
-  function startBackground() {
-    var mode = panel.dataset.mode;
-    var images = JSON.parse(panel.dataset.images || '[]');
-    var layers = panel.querySelectorAll('.bg-layer');
-    if (mode === 'fixed' || !images.length || layers.length < 2) return;
-
-    var index = Math.floor(Math.random() * images.length);
-    var front = 0;
-
-    // Fade the new image in on top, then drop the old one once it's covered.
-    function show(i) {
-      var layer = layers[front];
-      var old = layers[1 - front];
-      preload(images[i], function () {
-        layer.style.backgroundImage = "url('" + images[i] + "')";
-        layer.style.zIndex = 1;
-        old.style.zIndex = 0;
-        layer.classList.add('is-visible');
-        setTimeout(function () { old.classList.remove('is-visible'); }, 1700);
-      });
-    }
-
-    show(index);
-
-    if (mode === 'rotate' && images.length > 1 && !reduceMotion) {
-      var seconds = Math.max(3, parseFloat(panel.dataset.interval) || 12);
-      setInterval(function () {
-        if (document.hidden) return;
-        index = (index + 1) % images.length;
-        front = 1 - front;
-        show(index);
-      }, seconds * 1000);
-    }
-  }
-
-  // Only load images when the column is actually visible (it's hidden on small screens).
-  if (panel) {
-    var bgQuery = window.matchMedia('(min-width: 1025px)');
-    var started = false;
-    var tryStart = function () {
-      if (!started && bgQuery.matches) { started = true; startBackground(); }
+    var syncBgToggle = function () {
+      var hidden = root.classList.contains('bg-hidden');
+      var label = hidden ? 'Show images' : 'Hide images';
+      bgToggle.setAttribute('aria-expanded', String(!hidden));
+      bgToggle.setAttribute('aria-label', label);
+      bgToggle.title = label;
     };
-    tryStart();
-    bgQuery.addEventListener('change', tryStart);
+
+    bgToggle.addEventListener('click', function () {
+      var hidden = root.classList.toggle('bg-hidden');
+      if (!closedPage) store('bg', hidden ? 'hidden' : null);
+      syncBgToggle();
+    });
+    syncBgToggle();
+
+    // Keep a constant speed (px/s) whatever the strip's length.
+    var track = panel.querySelector('.bg-track');
+    var speed = Math.max(1, parseFloat(panel.dataset.speed) || 20);
+    var setDuration = function () {
+      var distance = track.offsetHeight / 2; // one copy of the list
+      if (distance > 0) track.style.setProperty('--bg-duration', (distance / speed) + 's');
+    };
+    if (window.ResizeObserver) new ResizeObserver(setDuration).observe(track);
+    else setDuration();
   }
 
   // ---------------------------------------------------------------

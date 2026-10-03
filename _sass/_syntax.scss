@@ -3,10 +3,10 @@ html:not([data-theme=dark]) .highlight table td { padding: 5px; }
 html:not([data-theme=dark]) .highlight table pre { margin: 0; }
 html:not([data-theme=dark]) .highlight, html:not([data-theme=dark]) .highlight .w {
   color: #24292f;
-  background-color: #f6f8fa;
+  background-color: var(--code-bg); // was #f6f8fa (github.light)
 }
 html:not([data-theme=dark]) .highlight .k, html:not([data-theme=dark]) .highlight .kd, html:not([data-theme=dark]) .highlight .kn, html:not([data-theme=dark]) .highlight .kp, html:not([data-theme=dark]) .highlight .kr, html:not([data-theme=dark]) .highlight .kt, html:not([data-theme=dark]) .highlight .kv {
-  color: #cf222e;
+  color: #a40e26; // darker than github.light #cf222e, for the blue code-bg
 }
 html:not([data-theme=dark]) .highlight .gr {
   color: #f6f8fa;
@@ -83,23 +83,23 @@ html:not([data-theme=dark]) .highlight .s, html:not([data-theme=dark]) .highligh
   color: #0a3069;
 }
 html:not([data-theme=dark]) .highlight .nd {
-  color: #8250df;
+  color: #6639ba; // darker than github.light #8250df, for the blue code-bg
 }
 html:not([data-theme=dark]) .highlight .nf, html:not([data-theme=dark]) .highlight .fm {
-  color: #8250df;
+  color: #6639ba; // darker than github.light #8250df, for the blue code-bg
 }
 html:not([data-theme=dark]) .highlight .err {
   color: #f6f8fa;
   background-color: #82071e;
 }
 html:not([data-theme=dark]) .highlight .c, html:not([data-theme=dark]) .highlight .ch, html:not([data-theme=dark]) .highlight .cd, html:not([data-theme=dark]) .highlight .cm, html:not([data-theme=dark]) .highlight .cp, html:not([data-theme=dark]) .highlight .cpf, html:not([data-theme=dark]) .highlight .c1, html:not([data-theme=dark]) .highlight .cs {
-  color: #6e7781;
+  color: #4c5560; // darker than github.light #6e7781, for the blue code-bg
 }
 html:not([data-theme=dark]) .highlight .gl {
-  color: #6e7781;
+  color: #4c5560; // darker than github.light #6e7781, for the blue code-bg
 }
 html:not([data-theme=dark]) .highlight .gt {
-  color: #6e7781;
+  color: #4c5560; // darker than github.light #6e7781, for the blue code-bg
 }
 html:not([data-theme=dark]) .highlight .ni {
   color: #24292f;
@@ -119,7 +119,7 @@ html[data-theme=dark] .highlight table td { padding: 5px; }
 html[data-theme=dark] .highlight table pre { margin: 0; }
 html[data-theme=dark] .highlight, html[data-theme=dark] .highlight .w {
   color: #c9d1d9;
-  background-color: #161b22;
+  background-color: var(--code-bg); // was #161b22 (github.dark)
 }
 html[data-theme=dark] .highlight .k, html[data-theme=dark] .highlight .kd, html[data-theme=dark] .highlight .kn, html[data-theme=dark] .highlight .kp, html[data-theme=dark] .highlight .kr, html[data-theme=dark] .highlight .kt, html[data-theme=dark] .highlight .kv {
   color: #ff7b72;

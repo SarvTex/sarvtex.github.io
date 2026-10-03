@@ -3,22 +3,22 @@
 // theme only has to redefine these variables.
 // ---------------------------------------------------------------
 :root {
-  --page-bg: #ffffff;
+  --page-bg: #fdffda;
   --text: #161616;
-  --muted: #808080;
-  --rule: #7a7a7a;
+  --muted: #5e6774;
+  --rule: #606b77;
   --link: #a52a2a;
-  --code-bg: #f3f1ee;
+  --code-bg: #e4ada3;
   --card: rgba(70, 130, 220, 0.06); // post boxes on the "New" page
   --card-hover: rgba(70, 130, 220, 0.12);
   --card-line: rgba(70, 130, 220, 0.18);
   --card-line-hover: rgba(70, 130, 220, 0.35);
 
-  --panel: #a82828; // the red sidebar / header
+  --panel: #14502f; // the green sidebar / header
   --panel-text: #ffffff;
 
   --sb-w: 16.5rem; // sidebar width
-  --sb-collapsed: 4.25rem; // sidebar width when collapsed (desktop)
+  --header-h: 4.5rem; // height of the top bar
   --gap: 0.5rem; // spacing between the panels
   --radius: 0.35rem;
 
@@ -33,13 +33,13 @@ html[data-theme="dark"] {
   --muted: #9b958e;
   --rule: #5c5a57;
   --link: #f08a7e;
-  --code-bg: #222227;
+  --code-bg: #1e2332;
   --card: rgba(110, 160, 240, 0.07);
   --card-hover: rgba(110, 160, 240, 0.14);
   --card-line: rgba(110, 160, 240, 0.18);
   --card-line-hover: rgba(110, 160, 240, 0.4);
 
-  --panel: #6a1d1d;
+  --panel: #14502f;
   --panel-text: #f4ece8;
 }
 

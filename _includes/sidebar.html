@@ -4,8 +4,6 @@
 {%- assign tags_sorted = site.tags | sort -%}
 
 <aside class="sidebar" id="sidebar" aria-label="Site navigation">
-  {% include menu-button.html class="menu-toggle--sidebar" %}
-
   <nav class="sidebar-nav">
     <ul class="nav">
       <li><a class="nav-link" href="{{ '/' | relative_url }}"{% if page.url == '/' %} aria-current="page"{% endif %}>New</a></li>
@@ -29,7 +27,7 @@
     </ul>
 
     {%- if tags_sorted.size > 0 %}
-      <div class="nav-sep" aria-hidden="true">---</div>
+      <hr class="nav-sep" aria-hidden="true">
 
       <ul class="nav nav--tags" aria-label="Tags">
         {%- for tag in tags_sorted %}

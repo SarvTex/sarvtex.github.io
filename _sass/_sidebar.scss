@@ -5,43 +5,48 @@
 //   .sidebar-open       (mobile, not remembered)
 // ---------------------------------------------------------------
 .sidebar {
-  @include panel;
+  grid-column: 1;
+  grid-row: 2;
   position: sticky;
-  top: var(--gap);
-  flex: none;
-  width: var(--sb-w);
-  height: calc(100vh - 2 * var(--gap));
-  padding: 0.9rem 1rem 1.25rem;
-  overflow-x: hidden;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  transition: width 0.25s ease;
+  top: calc(var(--header-h) + var(--gap));
+  align-self: start;
+  margin-top: var(--gap); // gap between the header bar and the sidebar
+  z-index: 25;
+  margin-left: var(--gap); // small gap between the window edge and the sidebar
+  width: calc(var(--sb-w) - var(--gap));
+  // Slide the whole column in from the left edge of the window
+  // (--sb-current animates between 0 and --sb-w).
+  transform: translateX(calc(var(--sb-current) - var(--sb-w)));
+  height: calc(100vh - var(--header-h) - var(--gap));
+  overflow: hidden;
+  background: var(--panel);
+  color: var(--panel-text);
 }
 
 .sidebar-nav {
-  // Fixed width so the text doesn't reflow while the sidebar animates.
-  width: calc(var(--sb-w) - 2rem);
-  transition: opacity 0.2s ease;
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem 1rem 1.25rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
-html.sidebar-collapsed .sidebar {
-  width: var(--sb-collapsed);
-}
-
+// Hide the links from keyboard/screen readers once the sidebar has closed.
 html.sidebar-collapsed .sidebar-nav {
-  opacity: 0;
   visibility: hidden;
+  transition: visibility 0s 0.25s;
 }
 
 // ----- Hamburger button (three white pills) -------------------------
 .menu-toggle {
+  position: relative;
+  isolation: isolate; // keeps the ::before highlight behind the bars
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 0.3rem;
   width: 2.3rem;
   height: 2.3rem;
-  margin-bottom: 0.6rem;
   padding: 0;
   border: 0;
   background: transparent;
@@ -49,23 +54,39 @@ html.sidebar-collapsed .sidebar-nav {
   flex: none;
 }
 
+// Highlight behind the bars: lighter on hover, darker while pressed.
+.menu-toggle::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -0.4rem;
+  border-radius: 0.4rem;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.menu-toggle:hover::before,
+.menu-toggle:focus-visible::before {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.menu-toggle:active::before {
+  background: rgba(0, 0, 0, 0.25);
+  transition-duration: 0s;
+}
+
 .menu-toggle__bar {
   display: block;
   height: 0.42rem;
   border-radius: 1rem;
   background: var(--panel-text);
+  transition: background-color 0.25s ease;
 }
 
-.menu-toggle--header {
-  display: none; // only shown on phones, see _layout.scss
-  margin: 0;
-  width: 2rem;
-  height: 2rem;
-  gap: 0.25rem;
-
-  .menu-toggle__bar {
-    height: 0.34rem;
-  }
+// Sidebar out: dim the bars toward the menu colour to show the state.
+// (main.js keeps aria-expanded in sync on desktop and mobile.)
+.menu-toggle[aria-expanded="true"] .menu-toggle__bar {
+  background: color-mix(in srgb, var(--panel-text) 65%, var(--panel));
 }
 
 // ----- Navigation text ----------------------------------------------
@@ -77,14 +98,14 @@ html.sidebar-collapsed .sidebar-nav {
 }
 
 .nav-sub {
-  padding-left: 1.35rem;
+  padding-left: 2.25rem;
 }
 
 .nav-link {
   display: block;
   padding: 0.05rem 0 0.05rem 1.05em;
   text-indent: -1.05em; // hanging indent for long titles
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   line-height: 1.35;
   color: var(--panel-text);
   text-decoration: none;
@@ -111,7 +132,7 @@ html.sidebar-collapsed .sidebar-nav {
 }
 
 .nav-sub .nav-link {
-  font-size: 1.2rem;
+  font-size: 1rem;
   padding-left: 0;
   text-indent: 0;
 
@@ -148,42 +169,78 @@ details[open] > summary.nav-link:not(.nav-link--tag)::before {
 }
 
 .nav-sep {
-  margin: 0.2rem 0;
-  font-size: 1.3rem;
-  color: var(--panel-text);
-  letter-spacing: 0.05em;
+  width: 80%;
+  margin: 0.6rem auto;
+  height: 1px;
+  border: 0;
+  background: var(--panel-text);
 }
 
-// ----- Mobile: off-canvas drawer over the text -----------------------
+// ----- Mobile: drawer that slides over the text, below the top bar -----
 @media (max-width: $bp-mobile) {
-  .sidebar,
-  html.sidebar-collapsed .sidebar {
+  .sidebar {
     position: fixed;
-    z-index: 50;
-    top: 0;
+    top: var(--header-h);
     left: 0;
-    height: 100%;
+    bottom: 0;
+    height: auto;
+    align-self: stretch; // "start" would shrink the drawer to its content
     width: min(var(--sb-w), 85vw);
-    border-radius: 0 var(--radius) var(--radius) 0;
-    transform: translateX(-105%);
-    transition: transform 0.25s ease;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease, visibility 0s 0.25s;
+    visibility: hidden;
     box-shadow: 0 0 2rem rgba(0, 0, 0, 0.4);
   }
 
+  .menu-toggle {
+    width: 2rem;
+    height: 2rem;
+    gap: 0.25rem;
+  }
+
+  // Highlight behind the bars: lighter on hover, darker while pressed.
+.menu-toggle::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -0.4rem;
+  border-radius: 0.4rem;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.menu-toggle:hover::before,
+.menu-toggle:focus-visible::before {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.menu-toggle:active::before {
+  background: rgba(0, 0, 0, 0.25);
+  transition-duration: 0s;
+}
+
+.menu-toggle__bar {
+    height: 0.34rem;
+  }
+
   html.sidebar-collapsed .sidebar-nav {
-    opacity: 1;
     visibility: visible;
   }
 
   html.sidebar-open .sidebar {
     transform: none;
+    visibility: visible;
+    transition: transform 0.25s ease;
   }
 
   html.sidebar-open .sidebar-backdrop:not([hidden]) {
     display: block;
     position: fixed;
-    inset: 0;
-    z-index: 40;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
     background: rgba(0, 0, 0, 0.45);
   }
 
@@ -193,9 +250,22 @@ details[open] > summary.nav-link:not(.nav-link--tag)::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  :root,
+  .menu-toggle::before,
   .sidebar,
-  .sidebar-nav,
-  .nav-link::before {
+  .nav-link::before,
+  .bg-panel,
+  .bg-toggle svg {
     transition: none !important;
+  }
+
+  // No motion: let the strip be scrolled by hand instead.
+  .bg-panel:has(.bg-track) {
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .bg-track {
+    animation: none;
   }
 }

@@ -1,43 +1,60 @@
 // ---------------------------------------------------------------
-// Page skeleton:  [sidebar] [header                      ]
-//                           [content        ][background ]
+// Page skeleton: red header bar, with the red sidebar below it (a small gap between).
+//
+//   [≡        NAME ······························· ☾]
+//
+//   [sidebar] [space][content][space][background]
+//
+// --sb-current is how far the sidebar has slid out: var(--sb-w) when
+// open, 0 when hidden. It's registered with @property so the browser can
+// animate it.
 // ---------------------------------------------------------------
-$bp-mobile: 768px; // below this: off-canvas sidebar
-$bp-bg: 1024px; // below this: no background column
+$bp-mobile: 768px; // below this: sidebar slides over the text
+$bp-bg: 1100px; // below this: no background column
+
+@property --sb-current {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+:root {
+  --sb-current: var(--sb-w);
+  transition: --sb-current 0.25s ease;
+}
+
+html.sidebar-collapsed {
+  --sb-current: 0px;
+}
 
 .site {
-  display: flex;
-  gap: var(--gap);
+  display: grid;
+  // The first column always reserves the full sidebar width; the sidebar
+  // grows/shrinks inside it, so the text and background never move.
+  grid-template-columns: var(--sb-w) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
   min-height: 100vh;
-  padding: var(--gap);
-}
-
-.main-col {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-// Red panel look shared by the sidebar and the header:
-// solid color with rounded corners.
-@mixin panel {
-  background: var(--panel);
-  color: var(--panel-text);
-  border-radius: var(--radius);
 }
 
 // ----- Header ----------------------------------------------------
 .site-header {
-  @include panel;
+  grid-column: 1 / -1;
+  position: sticky;
+  top: 0;
+  z-index: 30;
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.6rem 1.25rem;
-  min-height: 4.5rem;
+  height: var(--header-h);
+  padding: 0 1rem;
+  background: var(--panel);
+  color: var(--panel-text);
 }
 
 .site-title {
+  // Fixed spot: just past the sidebar's right edge, whether it's open or not.
+  // (1rem padding + 2.3rem button + 1rem gap) - 1.25rem = 3.05rem
+  margin-left: calc(var(--sb-w) - 3.05rem);
   font-family: var(--font-name);
   font-weight: 700;
   font-size: 2.5rem;
@@ -97,19 +114,25 @@ html:not([data-theme="dark"]) .theme-toggle .icon-sun {
 
 // ----- Content + background column ---------------------------------
 .content-row {
-  flex: 1;
+  // Image column width: what a √2:1 (portrait) image as tall as the window
+  // would need, capped so it doesn't crowd the text on narrower screens.
+  // The column itself always runs from the header to the bottom of the window.
+  --bg-w: min(calc((100vh - var(--header-h) - 2 * var(--gap)) / 1.41421), 24vw);
+
+  min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 46rem);
-  column-gap: 2rem;
+  // [space][text][space][image] — equal space either side of the text.
+  grid-template-columns: minmax(2rem, 1fr) minmax(0, 46rem) minmax(2rem, 1fr);
 
   &:has(.bg-panel) {
-    grid-template-columns: minmax(0, 46rem) minmax(14rem, 1fr);
+    grid-template-columns: minmax(2rem, 1fr) minmax(0, 46rem) minmax(2rem, 1fr) var(--bg-w);
   }
 }
 
 .content {
+  grid-column: 2;
   min-width: 0;
-  padding: 1.25rem 1rem 1rem 1.25rem;
+  padding: 1.25rem 1.25rem 1rem;
   display: flex;
   flex-direction: column;
 }
@@ -125,37 +148,103 @@ html:not([data-theme="dark"]) .theme-toggle .icon-sun {
   }
 }
 
-.bg-panel {
+.bg-column {
+  grid-column: 4;
   position: sticky;
-  top: var(--gap);
+  top: var(--header-h);
   align-self: start;
-  height: calc(100vh - 2 * var(--gap));
-  margin-top: var(--gap);
-  overflow: hidden;
-  border-radius: var(--radius);
-  background: var(--code-bg);
+  padding: var(--gap) var(--gap) 0 0;
+  overflow: clip; // the panel slides out to the right when hidden
 }
 
-.bg-layer {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  transition: opacity 1.6s ease;
+.bg-panel {
+  position: relative;
+  height: calc(100vh - var(--header-h) - 2 * var(--gap));
+  overflow: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s;
+}
 
-  &.is-visible {
+html.bg-hidden .bg-panel {
+  transform: translateX(110%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s;
+}
+
+// ">" button in the panel's top-right corner; becomes "<" (and stays put) when hidden.
+.bg-toggle {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--gap) + 0.5rem);
+  right: calc(var(--gap) + 0.5rem);
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--panel);
+  opacity: 0.85;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
     opacity: 1;
+  }
+
+  svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: none;
+    stroke: var(--panel-text);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.3s ease;
+  }
+}
+
+html.bg-hidden .bg-toggle svg {
+  transform: rotate(180deg);
+}
+
+// ----- scroll mode: a strip of images moving upward in a loop --------
+// The track holds the image list twice; sliding it up by exactly half
+// lands on an identical frame, so the loop is seamless. main.js sets the
+// duration from the track height and `background.speed`.
+.bg-track {
+  display: flex;
+  flex-direction: column;
+  animation: bg-scroll var(--bg-duration, 120s) linear infinite;
+}
+
+.bg-panel:hover .bg-track,
+html.bg-hidden .bg-track {
+  animation-play-state: paused;
+}
+
+.bg-strip-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 4rem; // gives lazy images some height before they load
+  margin-bottom: var(--gap);
+}
+
+@keyframes bg-scroll {
+  to {
+    transform: translateY(-50%);
   }
 }
 
 @media (max-width: $bp-bg) {
   .content-row,
   .content-row:has(.bg-panel) {
-    grid-template-columns: minmax(0, 46rem);
+    grid-template-columns: minmax(1rem, 1fr) minmax(0, 46rem) minmax(1rem, 1fr);
   }
 
-  .bg-panel {
+  .bg-column {
     display: none;
   }
 }
@@ -166,17 +255,23 @@ html:not([data-theme="dark"]) .theme-toggle .icon-sun {
 }
 
 @media (max-width: $bp-mobile) {
+  :root,
+  html.sidebar-collapsed {
+    --sb-current: 0px; // the sidebar floats over the text instead
+    --header-h: 3.75rem;
+  }
+
   .site {
-    padding: 0;
+    grid-template-columns: 0 minmax(0, 1fr); // the drawer is position: fixed
   }
 
   .site-header {
-    border-radius: 0;
-    padding: 0.5rem 0.75rem;
-    min-height: 3.75rem;
+    padding: 0 0.75rem;
+    gap: 0.75rem;
   }
 
   .site-title {
+    margin-left: 0;
     font-size: 1.6rem;
   }
 
@@ -184,8 +279,9 @@ html:not([data-theme="dark"]) .theme-toggle .icon-sun {
     display: none;
   }
 
-  .menu-toggle.menu-toggle--header {
-    display: flex;
+  .content-row,
+  .content-row:has(.bg-panel) {
+    grid-template-columns: 0 minmax(0, 1fr) 0;
   }
 
   .content {

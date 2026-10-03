@@ -18,11 +18,19 @@
       if (localStorage.getItem('sidebar') === 'collapsed') {
         document.documentElement.classList.add('sidebar-collapsed');
       }
+      if (localStorage.getItem('bg') === 'hidden') {
+        document.documentElement.classList.add('bg-hidden');
+      }
     } catch (e) {}
+    {%- if page.bg_closed %}
+    document.documentElement.classList.add('bg-hidden'); // this page starts with the image column closed
+    {%- endif %}
   })();
 </script>
 
-{% seo %}
+{% comment %} Same tab title on every page; jekyll-seo-tag still adds per-page meta tags. {% endcomment %}
+<title>{{ site.title }}</title>
+{% seo title=false %}
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css">
 

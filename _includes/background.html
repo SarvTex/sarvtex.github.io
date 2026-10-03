@@ -1,42 +1,34 @@
 {%- comment -%}
-  Right-hand background column. See `background:` in _config.yml.
-  Front matter `bg_image: <path>` forces one image; `bg_image: none` removes the column.
+  Right-hand image column: every image in `background.folder` (see _config.yml),
+  stacked and scrolling slowly upward in a loop.
+  The ">" button hides the column (remembered in localStorage, see head.html / main.js).
+  Front matter `bg_closed: true` starts the column hidden on that page.
 {%- endcomment -%}
-{%- assign bg_mode = site.background.mode | default: "fixed" -%}
-{%- assign bg_images = "" | split: "" -%}
-
-{%- if page.bg_image -%}
-  {%- assign bg_mode = "fixed" -%}
-  {%- assign bg_images = bg_images | push: page.bg_image -%}
-{%- elsif bg_mode == "fixed" -%}
-  {%- if site.background.image -%}
-    {%- assign bg_images = bg_images | push: site.background.image -%}
+{%- assign bg_exts = ".jpg,.jpeg,.png,.webp,.avif,.gif,.svg" | split: "," -%}
+{%- assign bg_urls = "" | split: "" -%}
+{%- for f in site.static_files -%}
+  {%- assign f_ext = f.extname | downcase -%}
+  {%- if f.path contains site.background.folder and bg_exts contains f_ext -%}
+    {%- assign f_url = f.path | relative_url -%}
+    {%- assign bg_urls = bg_urls | push: f_url -%}
   {%- endif -%}
-{%- else -%}
-  {%- assign bg_exts = ".jpg,.jpeg,.png,.webp,.avif,.gif,.svg" | split: "," -%}
-  {%- for f in site.static_files -%}
-    {%- assign f_ext = f.extname | downcase -%}
-    {%- if f.path contains site.background.folder and bg_exts contains f_ext -%}
-      {%- assign bg_images = bg_images | push: f.path -%}
-    {%- endif -%}
-  {%- endfor -%}
-{%- endif -%}
+{%- endfor -%}
 
-{%- if page.bg_image != "none" and bg_images.size > 0 -%}
-  {%- assign bg_urls = "" | split: "" -%}
-  {%- for img in bg_images -%}
-    {%- assign img_url = img | relative_url -%}
-    {%- assign bg_urls = bg_urls | push: img_url -%}
-  {%- endfor -%}
-  <aside class="bg-panel" aria-hidden="true"
-         data-mode="{{ bg_mode }}"
-         data-interval="{{ site.background.interval | default: 12 }}"
-         data-images='{{ bg_urls | jsonify }}'>
-    {%- if bg_mode == "fixed" %}
-      <div class="bg-layer is-visible" style="background-image: url('{{ bg_urls[0] }}')"></div>
-    {%- else %}
-      <div class="bg-layer"></div>
-      <div class="bg-layer"></div>
-    {%- endif %}
-  </aside>
+{%- if bg_urls.size > 0 -%}
+  <div class="bg-column"{% if page.bg_closed %} data-closed{% endif %}>
+    <button type="button" class="bg-toggle" aria-controls="bg-panel" aria-expanded="true"
+            aria-label="Hide images" title="Hide images">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+    <aside class="bg-panel" id="bg-panel" aria-hidden="true" data-speed="{{ site.background.speed | default: 20 }}">
+      <div class="bg-track">
+        {%- comment -%} Two identical copies, so the loop has no visible seam. {%- endcomment -%}
+        {%- for copy in (1..2) %}
+          {%- for url in bg_urls %}
+            <img class="bg-strip-img" src="{{ url }}" alt="" loading="lazy" decoding="async">
+          {%- endfor %}
+        {%- endfor %}
+      </div>
+    </aside>
+  </div>
 {%- endif -%}

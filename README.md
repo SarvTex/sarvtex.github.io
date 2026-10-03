@@ -37,8 +37,7 @@ date: 2026-10-01 14:00:00 -0300
 tags: [research, notes]      # each tag gets an expandable entry in the sidebar
 pin: true                    # optional: list under "Pinned" (newest 3 shown)
 description: Summary for search engines and link previews. # optional
-bg_image: /assets/img/bg/lake.jpg                         # optional: fixed background for this post
-# bg_image: none                                          # optional: no background column
+bg_closed: true                                          # optional: start with the image column hidden
 ---
 
 ## First section
@@ -60,19 +59,15 @@ Delete it once you don't need it.
 
 ### Background images (right column)
 
-Configured in `_config.yml` under `background:`:
-
-| `mode`   | What happens                                                                 |
-|----------|-------------------------------------------------------------------------------|
-| `fixed`  | Always shows `background.image`.                                              |
-| `random` | Picks one random image from `assets/img/bg/` on each page load.              |
-| `rotate` | Cross-fades through all images in `assets/img/bg/`, every `interval` seconds. |
+Every image in `assets/img/bg/` is stacked in the right column, which scrolls slowly upward in a
+loop (`background.speed` in `_config.yml`, in pixels per second; it pauses on hover).
 
 To add images, drop `.jpg / .png / .webp / .avif / .svg` files into `assets/img/bg/` and delete the
-`placeholder-*.svg` files. Tall images (portrait) look best. Keep them under ~500 KB each
+`placeholder-*.svg` files. Any shape works; each image is shown full-width at its own height. Keep them under ~500 KB each
 ([Squoosh](https://squoosh.app/) is good for shrinking them).
-A post's `bg_image:` always wins over the site setting.
-The column is hidden on screens narrower than 1024 px, so phones don't download the images.
+The column is hidden on screens narrower than 1100 px, so phones don't download the images.
+Visitors can hide it with the `>` button at its top (remembered per browser); the text stays where it is.
+The Art page starts with it hidden (`bg_closed: true`).
 
 ### Art gallery
 
@@ -85,8 +80,8 @@ Plain Markdown: edit `pages/about.md` and `pages/links.md`.
 
 ### Other settings (`_config.yml`)
 
-- `header_name`: the big name in the red header bar. `title` is what shows in the browser tab and
-  search results, and `tagline` is the small italic text beside the header name.
+- `header_name`: the big name in the red header bar. `title` is the browser-tab name (the same on every page) and
+  the site name in search results, and `tagline` is the small italic text beside the header name.
 - `theme_mode`: default color scheme for new visitors (`system`, `light`, or `dark`). Visitors can
   switch with the moon/sun button, and their choice is remembered in their browser.
 - `sidebar.pinned_max`, `sidebar.tag_recent`: how many pinned posts, and how many posts per tag, the sidebar shows.
@@ -211,8 +206,10 @@ Then make it permanent in `_sass/_base.scss`.
 
 ### Step 3: CSS layout (flexbox, grid, media queries)
 
-This site's layout uses **flexbox** (sidebar + main column) and **grid** (content + background).
-The phone version is a **media query**.
+This site's layout is a **grid** (top bar across; sidebar + content below; content + background
+inside), with **flexbox** lining up the items inside the top bar. The phone version is a **media query**.
+The sidebar animation works by animating one CSS variable, `--sb-current` (see the comment at the top
+of `_sass/_layout.scss`).
 
 - [Flexbox Froggy](https://flexboxfroggy.com/) and [Grid Garden](https://cssgridgarden.com/): games, about 30 minutes each.
 - CSS-Tricks guides: [Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/) and
@@ -226,12 +223,12 @@ The phone version is a **media query**.
 
 ### Step 4: Sass (the `.scss` files)
 
-Sass is CSS plus conveniences: nesting, `$variables`, `@mixin`/`@include`, and splitting into files.
+Sass is CSS plus conveniences: nesting, `$variables`, and splitting into files.
 
 - [Sass basics](https://sass-lang.com/guide/): one page, covers everything used here.
 
-*Exercise:* find `@mixin panel` in `_sass/_layout.scss`. It's why the header and sidebar share the
-same look. Change `border-radius` there (e.g. to `1rem`) and see both update.
+*Exercise:* find `$corner` in `_sass/_layout.scss`. It's the rounded inside corner where the top bar
+meets the sidebar. Set it to `2rem` and watch the curve grow.
 
 ### Step 5: Jekyll and Liquid (how pages are assembled)
 

@@ -3,7 +3,7 @@
 lang: en
 timezone: America/Sao_Paulo
 
-title: Lucas Saraiva # browser tab, search engines, feeds
+title: sarvtex # browser tab (same on every page) and search engines
 header_name: NAME # the big name in the red header bar (falls back to `title`)
 tagline: Doctorate Student @ Unicamp # shown next to the title on wide screens
 description: >- # used by SEO meta tags
@@ -25,19 +25,13 @@ github:
 # Images are taken from `background.folder`. Any jpg/jpeg/png/webp/avif/svg
 # placed there becomes part of the collection.
 #
-#   mode: fixed   – always show `background.image`
-#   mode: random  – pick one random image from the collection per page load
-#   mode: rotate  – cross-fade through the collection every `interval` seconds
-#
-# A post/page can override this in its front matter:
-#   bg_image: /assets/img/bg/some-image.jpg   # always this image
-#   bg_image: none                            # no background column at all
+#   The images scroll slowly upward in a loop, at `speed` pixels/second.
+#   Visitors can hide the column with its ">" button.
+#   A page with `bg_closed: true` in its front matter starts with it hidden.
 # ------------------------------------------------------------------
 background:
-  mode: rotate # [fixed | random | rotate]
   folder: /assets/img/bg/
-  image: /assets/img/bg/placeholder-1.svg # used by `fixed`
-  interval: 12 # seconds, used by `rotate`
+  speed: 20 # pixels per second
 
 # Sidebar
 sidebar:
