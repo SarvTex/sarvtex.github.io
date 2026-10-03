@@ -17,12 +17,11 @@ significant lenght of time, my tastes are pretty ecletic and dispersed and
 mostly "English internet" based. These include Twitch streamers 
 [*Joseph Anderson*](https://www.twitch.tv/andersonjph) and friends (I've done a 
 lot of [Fanart for them](https://janart.bulder.fi/creator/Out_SiN)), and Riichi 
-Mahjong (via Mahjong Soul).
+Mahjong (via [Mahjong Soul](https://mahjongsoul.yo-star.com/)).
 
 Besides this, I listen to a lot of podcasts, I like drawing, am learning 
-chinese, and I'm going to  try and read more. I have also started using an app 
-called "Timeleft", for scheduling dinners with strangers. I typically go every 
-Wednesday or so.
+chinese, and I'm going to  try and read more. I have also recently started using an app
+called "Timeleft", for scheduling dinners with strangers as a way to meet new friends. I typically go every other Wednesday..
 
 I'll ocassionally be writing about these interest and hobbies here. Not sure 
 this is right call, this is, in part, a work/professional blog afterall (see 
